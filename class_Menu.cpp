@@ -62,7 +62,7 @@ void Menu::draw(void)
 	
 	char buf[MENU_COLS];
 	char cursor[] = { MENU_CURSOR };
-	uint8_t pos = _index - _index / MENU_ROWS * MENU_ROWS; // Считаем на какой строке текущий пункт
+	uint8_t pos = _index % MENU_ROWS; // Текущая позиция курсора
 
 	for(uint8_t i=0;i<MENU_ROWS;++i) {
 		uint8_t index = _index - pos + i;
@@ -82,17 +82,12 @@ void Menu::ShowMain(void)
 }
 void Menu::goDown(void)
 {
-	_index++;
-	if(_index >= _count) _index = 0;
+	_index = (_index + 1) % _count;
 	draw();
 }
 void Menu::goUp(void)
 {
-	if(_index - 1 < 0) {
-		_index = _count - 1;
-	} else {
-		_index--;
-	}
+	_index = (_index == 0) ? _count - 1 : _index - 1;
 	draw();
 }
 void Menu::goBack(void)

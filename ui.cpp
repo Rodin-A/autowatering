@@ -21,8 +21,8 @@ uint8_t UI::setIntMax;
 void UI::DisplayTime(void) {
 	RTOS::SetTimerTask(DisplayTime,500);
 	if (UI::DisplayState != UI::none) return;
-	char data[16];
-	static const char DOW[][4] = {"MON","TUE","WED","THU","FRI","SAT","SUN"};
+	static char data[16];
+	static const char DOW[][4] PROGMEM = {"MON","TUE","WED","THU","FRI","SAT","SUN"};
 	lcd::home();
 	sprintf_P(data, PSTR("%s %02u.%02u  %02u:%02u"), DOW[CurDT.DOW - 1], CurDT.Date.Day, CurDT.Date.Month, CurDT.Time.H, CurDT.Time.M);
 	if (UI::blink) {

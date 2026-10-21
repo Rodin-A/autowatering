@@ -76,9 +76,10 @@ void FILL_EMERGENCY_TIMER(void)
 		timer = 0;
 		return;
 	}
+	
 	RTOS::SetTimerTask(FILL_EMERGENCY_TIMER, 60000);
-	timer++;
-	if (timer > EmergencyStop) {
+	
+	if (++timer > EmergencyStop) {
 		RTOS::SetTask(FILL_STOP);	
 	}
 }
@@ -90,10 +91,11 @@ void FILL_TIMER(void)
 		timer = 0;
 		return;
 	}
+	
 	RTOS::SetTimerTask(FILL_TIMER, 1000);
 	if (!flags.FULL_TANK) return;
-	timer++;
-	if (timer > FILL.Delay) {
+
+	if (++timer > FILL.Delay) {
 		RTOS::SetTask(FILL_STOP);
 	}
 }
@@ -334,13 +336,9 @@ void Show_StartDate(void)
 void menuCallback(uint8_t id)
 {
 	switch(id) {
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7: // Zone DOW
+		
+		// Обработка дней недели для зон (1-7)
+		case 1 ... 7:
 		{
 			CurZone.ZONE = Menu::getPreviousId() - 1;
 			CurZone.DOWBit = id - 1;
@@ -427,13 +425,8 @@ void menuCallback(uint8_t id)
 			UI::SetTime(&CurDT.Time, SetTimeDone);
 			break;
 		}
-		case 221:
-		case 222:
-		case 223:
-		case 224:
-		case 225:
-		case 226:
-		case 227: // Set DoW
+
+		case 221 ... 227: // Set DoW
 		{
 			CurDT.DOW = id - 220;
 			SetDT();
@@ -520,12 +513,12 @@ void CheckZoneStart(void)
 	if (UI::DisplayState == UI::get_time) return;
 
 	for(uint8_t i=0;i<CountOfZones;i++) {
+		
 		if ( !ZONE[i].Enabled ) continue;
-		if ( ZONE[i].RainDepend ) {
-			if ( flags.WAS_RAIN ) continue;
-		}
+		if ( ZONE[i].RainDepend && flags.WAS_RAIN ) continue;	
 		if ( !BitIsSet(ZONE[i].DOW, CurDT.DOW) ) continue;
-		if( (ZONE[i].Start.H == CurDT.Time.H) && (ZONE[i].Start.M == CurDT.Time.M) ) {
+		
+		if( ZONE[i].Start.H == CurDT.Time.H && ZONE[i].Start.M == CurDT.Time.M ) {
 			cz = CurZone.ZONE;
 			CurZone.ZONE = i;
 			ZoneCurDelay[i] = ZONE[i].Delay;
@@ -567,6 +560,9 @@ void Check_Water_Level(void)
 	RTOS::SetTimerTask(Check_Water_Level,300);
 	if (BitIsSet(SENSOR_PIN,WATER_SENSOR)) {
 		flags.FULL_TANK = true;
+		if (BitIsSet(CTRL_PORT, CTRL_FILL) && !flags.FILLING) {
+			RTOS::SetTask(FILL_STOP);
+		}
 	} else {
 		flags.FULL_TANK = false;
 	}

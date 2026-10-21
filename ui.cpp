@@ -83,7 +83,7 @@ void UI::SetDate_Blink(void) {
 
 	RTOS::SetTimerTask(SetDate_Blink,400);
 	
-	char data[9];
+	char data[9] = {0};
 	lcd::setcursor(4,0);
 	sprintf_P(data, PSTR("%02u.%02u.%02u"), set_date->Day, set_date->Month, set_date->Year);
 	lcd::str(data);
@@ -151,7 +151,7 @@ void UI::SetTime_Blink(void) {
 
 	RTOS::SetTimerTask(SetTime_Blink,400);
 
-	char data[6];
+	char data[6] = {0};
 	lcd::setcursor(6,0);
 	sprintf_P(data, PSTR("%02u:%02u"), set_time->H, set_time->M);
 	lcd::str(data);

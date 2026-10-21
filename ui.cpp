@@ -24,7 +24,7 @@ void UI::DisplayTime(void) {
 	static char data[16];
 	static const char DOW[][4] PROGMEM = {"MON","TUE","WED","THU","FRI","SAT","SUN"};
 	lcd::home();
-	sprintf_P(data, PSTR("%s %02u.%02u  %02u:%02u"), DOW[CurDT.DOW - 1], CurDT.Date.Day, CurDT.Date.Month, CurDT.Time.H, CurDT.Time.M);
+	sprintf_P(data, PSTR("%S %02u.%02u  %02u:%02u"), DOW[CurDT.DOW - 1], CurDT.Date.Day, CurDT.Date.Month, CurDT.Time.H, CurDT.Time.M);
 	if (UI::blink) {
 		data[13] = 32;
 	} else {
@@ -83,7 +83,7 @@ void UI::SetDate_Blink(void) {
 
 	RTOS::SetTimerTask(SetDate_Blink,400);
 	
-	char data[8];
+	char data[9];
 	lcd::setcursor(4,0);
 	sprintf_P(data, PSTR("%02u.%02u.%02u"), set_date->Day, set_date->Month, set_date->Year);
 	lcd::str(data);
@@ -151,7 +151,7 @@ void UI::SetTime_Blink(void) {
 
 	RTOS::SetTimerTask(SetTime_Blink,400);
 
-	char data[5];
+	char data[6];
 	lcd::setcursor(6,0);
 	sprintf_P(data, PSTR("%02u:%02u"), set_time->H, set_time->M);
 	lcd::str(data);
@@ -211,7 +211,7 @@ void UI::SetInt_Blink(void) {
 	
 	RTOS::SetTimerTask(SetInt_Blink,400);
 
-	char data[5];
+	char data[5] = {0};
 	lcd::clear();
 	lcd::home();
 	if (blink) {

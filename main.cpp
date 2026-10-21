@@ -216,7 +216,7 @@ void SetFillDelayDone(void)
 
 void SaveZONE(void)
 {
-	eeprom_write_block((const void*)&ZONE[CurZone.ZONE], (void*)&sZONE[CurZone.ZONE], sizeof(ZONE));	
+	eeprom_update_block(&ZONE[CurZone.ZONE], &sZONE[CurZone.ZONE], sizeof(ZONE[0]));
 }
 
 void SetZoneEnabledDone(void)
@@ -516,7 +516,7 @@ void CheckZoneStart(void)
 		
 		if ( !ZONE[i].Enabled ) continue;
 		if ( ZONE[i].RainDepend && flags.WAS_RAIN ) continue;	
-		if ( !BitIsSet(ZONE[i].DOW, CurDT.DOW) ) continue;
+		if ( !BitIsSet(ZONE[i].DOW, CurDT.DOW - 1) ) continue;
 		
 		if( ZONE[i].Start.H == CurDT.Time.H && ZONE[i].Start.M == CurDT.Time.M ) {
 			cz = CurZone.ZONE;
@@ -577,7 +577,7 @@ int main(void)
 {
 	eeprom_read_block((void*)&FILL, (const void*)&sFILL, sizeof(FILL));
 	for (uint8_t i=0;i<CountOfZones;i++) {
-		eeprom_read_block((void*)&ZONE[i],(const void*)&sZONE[i], sizeof(ZONE));
+		eeprom_read_block((void*)&ZONE[i],(const void*)&sZONE[i], sizeof(ZONE[0]));
 		CTRL_DDR |= (1<<i);
 	}
 	

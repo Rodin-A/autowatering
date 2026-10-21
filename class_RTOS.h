@@ -22,7 +22,7 @@
 
 //System Timer Config
 #define Prescaler	  		32
-#define	TimerDivider  		(F_CPU/Prescaler/1000)		// 1 mS
+#define	TimerDivider  		(F_CPU/Prescaler/1000 - 1)		// 1 mS
 
 //RTOS Config
 #define RTOS_ISR  			TIMER2_COMP_vect

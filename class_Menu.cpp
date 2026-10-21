@@ -61,14 +61,13 @@ void Menu::draw(void)
 	lcd::home();
 	
 	char buf[MENU_COLS];
-	char cursor[] = { MENU_CURSOR };
 	uint8_t pos = _index % MENU_ROWS; // Текущая позиция курсора
 
 	for(uint8_t i=0;i<MENU_ROWS;++i) {
 		uint8_t index = _index - pos + i;
 		if (index == _count) break;
 		lcd::setcursor(0,i);
-		if (i == pos) lcd::str( cursor );
+		if (i == pos) lcd::send_data( MENU_CURSOR );
 		_cur_item[index].GetName(buf);
 		lcd::str( buf );
 	}

@@ -155,7 +155,7 @@ void SetDT(void)
 	TWI::write( RTC_ConvertTo( 0 ) );				// SEC
 	TWI::write( RTC_ConvertTo( CurDT.Time.M ) );	// MIN
 	TWI::write( RTC_ConvertTo( CurDT.Time.H ) );	// HOUR
-	TWI::write( RTC_ConvertTo( CurDT.DOW ) );		// WEEKDAY
+	TWI::write( RTC_ConvertTo( CurDT.DOW + 1) );	// WEEKDAY
 	TWI::write( RTC_ConvertTo( CurDT.Date.Day ) );	// DAYS
 	TWI::write( RTC_ConvertTo( CurDT.Date.Month ) );// MONTH
 	TWI::write( RTC_ConvertTo( CurDT.Date.Year ) ); // YEAR
@@ -279,8 +279,10 @@ void GetTime(void)
 	CurDT.Time.M = RTC_ConvertFrom(buf);
 	buf = TWI::read(READ_NOEND);			// hour
 	CurDT.Time.H = RTC_ConvertFrom(buf);
-	buf = TWI::read(READ_NOEND);			// workday
-	CurDT.DOW = RTC_ConvertFrom(buf);
+	buf = TWI::read(READ_NOEND);
+	uint8_t dow = RTC_ConvertFrom(buf) - 1;			// workday
+	if (dow > 7) dow = 0;
+	CurDT.DOW = dow;
 	buf = TWI::read(READ_NOEND);			// day
 	CurDT.Date.Day = RTC_ConvertFrom(buf);
 	buf = TWI::read(READ_NOEND);			// month
@@ -428,7 +430,7 @@ void menuCallback(uint8_t id)
 
 		case 221 ... 227: // Set DoW
 		{
-			CurDT.DOW = id - 220;
+			CurDT.DOW = id - 221;
 			SetDT();
 			Menu::goBack();
 			break;
@@ -516,7 +518,7 @@ void CheckZoneStart(void)
 		
 		if ( !ZONE[i].Enabled ) continue;
 		if ( ZONE[i].RainDepend && flags.WAS_RAIN ) continue;	
-		if ( !BitIsSet(ZONE[i].DOW, CurDT.DOW - 1) ) continue;
+		if ( !BitIsSet(ZONE[i].DOW, CurDT.DOW) ) continue;
 		
 		if( ZONE[i].Start.H == CurDT.Time.H && ZONE[i].Start.M == CurDT.Time.M ) {
 			cz = CurZone.ZONE;
